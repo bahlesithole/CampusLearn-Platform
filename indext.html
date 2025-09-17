@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Topic Creation Screen -->
+        <div class="screen" id="topicScreen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="signal-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="topic-screen">
+                <h1 class="topic-title">Create a Topic</h1>
+                <div class="input-group">
+                    <label class="input-label">Topic Name</label>
+                    <input type="text" id="topicNameInput" class="input-field" placeholder="Enter topic name">
+                </div>
+                <button class="topic-btn" id="createTopicBtn">Create Topic</button>
+                <div id="topicList" class="topic-list" style="margin-top:20px;"></div>
+            </div>
+        </div>
+        <!-- Login Screen -->
+        <div class="screen active" id="loginScreen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="signal-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            
+            <div class="login-screen">
+                <div class="logo">
+                    <div class="logo-icon">📚</div>
+                    <div class="logo-text">CampusLearn</div>
+                </div>
+                
+                <h1 class="login-title">Student Login</h1>
+                
+                <div class="input-group">
+                    <label class="input-label">✉️ Student Email/ID</label>
+                    <input type="email" class="input-field" id="loginEmail" placeholder="Enter your email">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">🔒 Password</label>
+                    <input type="password" class="input-field" id="loginPassword" placeholder="Enter your password">
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                <div id="loginError" style="color:red;min-height:22px;margin-bottom:8px;"></div>
+                <button class="login-btn" id="loginBtn">Log in</button>
+                <div class="signup-link">
+                    Don't have an account? <a href="#">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div class="screen" id="profileScreen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="signal-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-name">John Doe</div>
+                <div class="profile-email">john.doe@campus.com</div>
+            </div>
+            
+            <div class="profile-menu">
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">📋</div>
+                        <div class="menu-text">Tasks</div>
+                    </div>
+                    <div class="chevron"></div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">❓</div>
+                        <div class="menu-text">Questions</div>
+                    </div>
+                    <div class="chevron"></div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">💬</div>
+                        <div class="menu-text">Responses</div>
+                    </div>
+                    <div class="chevron"></div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">🎓</div>
+                        <div class="menu-text">Get Delegated Help</div>
+                    </div>
+                    <div class="menu-badge">Selected</div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">📚</div>
+                        <div class="menu-text">Binary Trees</div>
+                    </div>
+                    <div class="chevron"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Screen -->
+        <div class="screen" id="uploadScreen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="signal-bars">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            
+            <div class="upload-screen">
+                <h1 class="upload-title">Upload Content</h1>
+                <p class="upload-subtitle">Choose a resource to upload</p>
+
+                <div class="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        Drag and drop a file here<br>
+                        or click to select
+                    </div>
+                </div>
+
+                <button class="upload-btn">Upload</button>
+
+                <div id="uploadedContent" class="uploaded-content" style="margin-top:20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+    <button class="nav-btn active" onclick="showScreen('loginScreen')">Login</button>
+    <button class="nav-btn" onclick="showScreen('profileScreen')">Profile</button>
+    <button class="nav-btn" onclick="showScreen('uploadScreen')">Upload</button>
+    <button class="nav-btn" onclick="showScreen('topicScreen')">Topics</button>
+    </div>
+
+</body>
+</html>
