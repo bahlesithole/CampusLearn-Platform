@@ -26,17 +26,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   });
 });
+
 // --- Navigation ---
-function showScreen(id) {
+function showScreen(id, event) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('active');
+  }
 }
 
-
+// --- API & Auth ---
 const API_URL = 'http://localhost:4000/api';
-let authToken = null;
+let authToken = localStorage.getItem('authToken') || null;
 
 // --- Signup ---
 async function handleSignup() {
@@ -178,7 +181,6 @@ let topics = [];
 function createTopic() {
   const input = document.getElementById('topicNameInput');
   const name = input.value.trim();
-  // Use the correct output div for topics
   const list = document.getElementById('topicList');
   if (!name) {
     list.innerHTML = '<span style="color:#dc2626;">Please enter a topic name.</span>';
@@ -190,7 +192,6 @@ function createTopic() {
   setTimeout(renderTopics, 700);
 }
 function renderTopics() {
-  // Use the correct output div for topics
   const list = document.getElementById('topicList');
   if (topics.length === 0) {
     list.innerHTML = "";
@@ -198,42 +199,49 @@ function renderTopics() {
   }
   list.innerHTML = topics.map(t => `<div class='topic-pill'>${t}</div>`).join('');
 }
-
-// --- Upload ---
-let selectedFile = null;
-function handleUpload() {
+// -Handle upload-
+async function handleUpload() {
   const fileInput = document.getElementById('fileInput');
   const file = fileInput.files[0];
-  // Use the correct output div for upload
   const contentDiv = document.getElementById('uploadedContent');
 
   if (!file) {
     contentDiv.innerHTML = "<span style='color:#dc2626;'>No file selected.</span>";
     return;
   }
-  if (file.type.startsWith("text")) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      contentDiv.innerHTML = `<span style='color:#16a34a;'>File uploaded successfully!</span><br><pre style='margin:8px 0 0 0; background:#f4f8fc; border-radius:7px; padding:10px;'>${e.target.result.replace(/</g, '&lt;')}</pre>`;
-    };
-    reader.readAsText(file);
-  } else {
-    contentDiv.innerHTML = `<span style='color:#16a34a;'>File uploaded: ${file.name}</span>`;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('metadata', JSON.stringify({ uploadedBy: 'anonymous', module: 'WPR3781' }));
+
+  try {
+    const res = await fetch('http://localhost:5000/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      contentDiv.innerHTML = `<span style='color:#16a34a;'>Upload successful! File ID: ${data.id}</span>`;
+    } else {
+      contentDiv.innerHTML = `<span style='color:#dc2626;'>Upload failed: ${data.error}</span>`;
+    }
+  } catch (err) {
+    console.error(err);
+    contentDiv.innerHTML = `<span style='color:#dc2626;'>Upload error: ${err.message}</span>`;
   }
 }
 
-// --- Forgot Password Modal & Logic ---
+// --- Forgot Password ---
 function showForgotPasswordModal(event) {
   event.preventDefault();
   document.getElementById('forgotPasswordModal').style.display = 'block';
   document.getElementById('forgotEmail').value = '';
   document.getElementById('forgotError').textContent = '';
 }
-
 function closeForgotPasswordModal() {
   document.getElementById('forgotPasswordModal').style.display = 'none';
 }
-
 async function handleForgotPassword() {
   const email = document.getElementById('forgotEmail').value.trim();
   const errorDiv = document.getElementById('forgotError');
@@ -257,12 +265,10 @@ async function handleForgotPassword() {
   }
 }
 
-// Close modal if clicking outside content
+// Close modal if clicking outside
 window.onclick = function(event) {
   const modal = document.getElementById('forgotPasswordModal');
   if (event.target === modal) {
     closeForgotPasswordModal();
   }
-}
-
-
+};

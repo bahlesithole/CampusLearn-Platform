@@ -5,40 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusLearn Platform</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- The header with Logo and Navigation -->
+  <!-- Header with Logo and Navigation -->
   <header class="nav-bar">
-      <div class="logo">
-        <span class="logo-icon">📚</span>
-        <span class="logo-text">CampusLearn</span>
-      </div>
+    <div class="logo">
+      <span class="logo-icon">📚</span>
+      <span class="logo-text">CampusLearn</span>
+    </div>
 
-      <div class="nav-btn-group">
-        <button class="nav-btn active" onclick="showScreen('loginScreen')">Login</button>
-        <button class="nav-btn" onclick="showScreen('signupScreen')">Sign Up</button>
-        <button class="nav-btn" onclick="showScreen('profileScreen')">Profile</button>
-        <button class="nav-btn" onclick="showScreen('uploadScreen')">Upload</button>
-        <button class="nav-btn" onclick="showScreen('topicScreen')">Topics</button>
-      </div>
+    <div class="nav-btn-group">
+      <button class="nav-btn active" onclick="showScreen('loginScreen', event)">Login</button>
+      <button class="nav-btn" onclick="showScreen('signupScreen', event)">Sign Up</button>
+      <button class="nav-btn" onclick="showScreen('profileScreen', event)">Profile</button>
+      <button class="nav-btn" onclick="showScreen('uploadScreen', event)">Upload</button>
+      <button class="nav-btn" onclick="showScreen('topicScreen', event)">Topics</button>
+    </div>
   </header>
 
-
-  <!-- Login Screens -->
+  <!-- Login Screen -->
   <div class="screen active" id="loginScreen">
     <h1 class="title">Student Login</h1>
     <div class="input-group">
       <label>✉️Student Email</label>
       <input type="email" id="loginEmail" placeholder="Enter your email">
     </div>
-
     <div class="input-group">
       <label>🔒Password</label>
       <input type="password" id="loginPassword" placeholder="Enter your password">
     </div>
-    
     <div id="loginError" class="error-msg"></div>
     <div class="forgot-password-row">
       <a href="#" id="forgotPasswordLink" onclick="showForgotPasswordModal(event)">Forgot Password?</a>
@@ -67,12 +64,10 @@
       <label>Full Name</label>
       <input type="text" id="signupName" placeholder="Enter your full name">
     </div>
-
     <div class="input-group">
       <label>Email</label>
       <input type="email" id="signupEmail" placeholder="Enter your email">
     </div>
-
     <div class="input-group">
       <label>Password</label>
       <input type="password" id="signupPassword" placeholder="Enter your password">
@@ -83,77 +78,55 @@
 
   <!-- Profile Screen -->
   <div class="screen" id="profileScreen">
-      <div class="profile-header">
-        <div class="profile-avatar">
-           <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="28" cy="28" r="28" fill="#E5E5E5"/>
-            <ellipse cx="28" cy="23" rx="10" ry="10" fill="#6D28D9"/>
-            <ellipse cx="28" cy="41" rx="16" ry="10" fill="#6D28D9"/>
-          </svg>
-
-        </div>
-        <h1 class="title profile-title">Profile</h1>
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="28" cy="28" r="28" fill="#E5E5E5"/>
+          <ellipse cx="28" cy="23" rx="10" ry="10" fill="#6D28D9"/>
+          <ellipse cx="28" cy="41" rx="16" ry="10" fill="#6D28D9"/>
+        </svg>
       </div>
-      <div id="profileInfo"></div>
-      <form id="profileEditForm">
-        <div class="input-group">
-          <label for="profileName">Full Name</label>
-          <input type="text" id="profileName" name="profileName" />
-        </div>
-        <div class="input-group">
-          <label for="profileAcademic">Academic Details <span class="required-asterisk">*</span></label>
-          <input type="text" id="profileAcademic" name="profileAcademic" placeholder="e.g. BSc Computer Science, Year 2" required />
-        </div>
-        <div class="input-group">
-          <label for="profileTopics">Topics Needed (comma separated) <span class="asterisk">*</span></label>
-          <input type="text" id="profileTopics" name="profileTopics" placeholder="e.g. Algorithms, Calculus" required />
-        </div>
-        <button type="submit" class="upload-btn">Save Profile</button>
-        <button type="button" class="topic-btn margin-left-10" id="cancelProfileEdit">Cancel</button>
-      </form>
-      <button id="editProfileBtn" class="upload-btn">Edit Profile</button>
-      <div class="profile-menu">
-        <div class="profile-menu-item">
-          <span class="profile-menu-icon">📝</span>
-          <span class="profile-menu-label">Tasks</span>
-          <span class="profile-menu-arrow">&gt;</span>
-        </div>
-        <div class="profile-menu-item">
-          <span class="profile-menu-icon">❓</span>
-          <span class="profile-menu-label">Questions</span>
-          <span class="profile-menu-arrow">&gt;</span>
-        </div>
-        <div class="profile-menu-item">
-          <span class="profile-menu-icon">💬</span>
-          <span class="profile-menu-label">Responses</span>
-          <span class="profile-menu-arrow">&gt;</span>
-        </div>
-        <div class="profile-menu-item selected">
-          <span class="profile-menu-icon">🧑‍💻</span>
-          <span class="profile-menu-label">Get Delegated Help</span>
-          <span class="profile-menu-selected">Selected</span>
-          <span class="profile-menu-arrow">&gt;</span>
-        </div>
-        <div class="profile-menu-item">
-          <span class="profile-menu-icon">👨🏻‍🏫</span>
-          <span class="profile-menu-label">Contact Tutor</span>
-          <span class="profile-menu-arrow">&gt;</span>
+      <h1 class="title profile-title">Profile</h1>
+    </div>
+    <div id="profileInfo"></div>
+    <form id="profileEditForm" style="display:none;">
+      <div class="input-group">
+        <label for="profileName">Full Name</label>
+        <input type="text" id="profileName" name="profileName" />
       </div>
+      <div class="input-group">
+        <label for="profileAcademic">Academic Details <span class="required-asterisk">*</span></label>
+        <input type="text" id="profileAcademic" name="profileAcademic" placeholder="e.g. BSc Computer Science, Year 2" required />
+      </div>
+      <div class="input-group">
+        <label for="profileTopics">Topics Needed (comma separated) <span class="asterisk">*</span></label>
+        <input type="text" id="profileTopics" name="profileTopics" placeholder="e.g. Algorithms, Calculus" required />
+      </div>
+      <button type="submit" class="upload-btn">Save Profile</button>
+      <button type="button" class="topic-btn margin-left-10" id="cancelProfileEdit">Cancel</button>
+    </form>
+    <button id="editProfileBtn" class="upload-btn">Edit Profile</button>
+    <div class="profile-menu">
+      <div class="profile-menu-item"><span class="profile-menu-icon">📝</span><span class="profile-menu-label">Tasks</span><span class="profile-menu-arrow">&gt;</span></div>
+      <div class="profile-menu-item"><span class="profile-menu-icon">❓</span><span class="profile-menu-label">Questions</span><span class="profile-menu-arrow">&gt;</span></div>
+      <div class="profile-menu-item"><span class="profile-menu-icon">💬</span><span class="profile-menu-label">Responses</span><span class="profile-menu-arrow">&gt;</span></div>
+      <div class="profile-menu-item selected"><span class="profile-menu-icon">🧑‍💻</span><span class="profile-menu-label">Get Delegated Help</span><span class="profile-menu-selected">Selected</span><span class="profile-menu-arrow">&gt;</span></div>
+      <div class="profile-menu-item"><span class="profile-menu-icon">👨🏻‍🏫</span><span class="profile-menu-label">Contact Tutor</span><span class="profile-menu-arrow">&gt;</span></div>
+    </div>
   </div>
-</div>
 
   <!-- Upload Screen -->
   <div class="screen" id="uploadScreen">
     <h1 class="title upload-title">Upload Content</h1>
     <div class="input-group upload-group">
       <label for="fileInput">Select file to upload:</label>
-      <input type="file" id="fileInput" title="Select file to upload" placeholder="Choose a file" accept=".pdf,.doc,.docx,.txt">
+      <input type="file" id="fileInput" title="Select file to upload" accept=".pdf,.doc,.docx,.txt">
     </div>
     <button class="upload-btn" onclick="handleUpload()">Upload</button>
     <div id="uploadedContent" class="upload-content-box">
-    No files uploaded yet.
+      No files uploaded yet.
+    </div>
   </div>
-</div>
 
   <!-- Topic Creation Screen -->
   <div class="screen" id="topicScreen">
@@ -168,6 +141,4 @@
   </div>
 
 </body>
-</html>
-
 </html>
