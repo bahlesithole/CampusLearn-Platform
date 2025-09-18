@@ -1,171 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusLearn Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js"></script>
 </head>
 <body>
-    <div class="phone-container">
-        <!-- Topic Creation Screen -->
-        <div class="screen" id="topicScreen">
-            <div class="status-bar">
-                <span>9:41</span>
-                <div class="signal-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            <div class="topic-screen">
-                <h1 class="topic-title">Create a Topic</h1>
-                <div class="input-group">
-                    <label class="input-label">Topic Name</label>
-                    <input type="text" id="topicNameInput" class="input-field" placeholder="Enter topic name">
-                </div>
-                <button class="topic-btn" id="createTopicBtn">Create Topic</button>
-                <div id="topicList" class="topic-list" style="margin-top:20px;"></div>
-            </div>
-        </div>
-        <!-- Login Screen -->
-        <div class="screen active" id="loginScreen">
-            <div class="status-bar">
-                <span>9:41</span>
-                <div class="signal-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            
-            <div class="login-screen">
-                <div class="logo">
-                    <div class="logo-icon">📚</div>
-                    <div class="logo-text">CampusLearn</div>
-                </div>
-                
-                <h1 class="login-title">Student Login</h1>
-                
-                <div class="input-group">
-                    <label class="input-label">✉️ Student Email/ID</label>
-                    <input type="email" class="input-field" id="loginEmail" placeholder="Enter your email">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">🔒 Password</label>
-                    <input type="password" class="input-field" id="loginPassword" placeholder="Enter your password">
-                </div>
-                
-                <div class="forgot-password">
-                    <a href="#">Forgot password?</a>
-                </div>
-                <div id="loginError" style="color:red;min-height:22px;margin-bottom:8px;"></div>
-                <button class="login-btn" id="loginBtn">Log in</button>
-                <div class="signup-link">
-                    Don't have an account? <a href="#">Sign up</a>
-                </div>
-            </div>
-        </div>
 
-        <!-- Profile Screen -->
-        <div class="screen" id="profileScreen">
-            <div class="status-bar">
-                <span>9:41</span>
-                <div class="signal-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            
-            <div class="profile-header">
-                <div class="profile-avatar">👤</div>
-                <div class="profile-name">John Doe</div>
-                <div class="profile-email">john.doe@campus.com</div>
-            </div>
-            
-            <div class="profile-menu">
-                <div class="menu-item">
-                    <div class="menu-item-left">
-                        <div class="menu-icon">📋</div>
-                        <div class="menu-text">Tasks</div>
-                    </div>
-                    <div class="chevron"></div>
-                </div>
-                
-                <div class="menu-item">
-                    <div class="menu-item-left">
-                        <div class="menu-icon">❓</div>
-                        <div class="menu-text">Questions</div>
-                    </div>
-                    <div class="chevron"></div>
-                </div>
-                
-                <div class="menu-item">
-                    <div class="menu-item-left">
-                        <div class="menu-icon">💬</div>
-                        <div class="menu-text">Responses</div>
-                    </div>
-                    <div class="chevron"></div>
-                </div>
-                
-                <div class="menu-item">
-                    <div class="menu-item-left">
-                        <div class="menu-icon">🎓</div>
-                        <div class="menu-text">Get Delegated Help</div>
-                    </div>
-                    <div class="menu-badge">Selected</div>
-                </div>
-                
-                <div class="menu-item">
-                    <div class="menu-item-left">
-                        <div class="menu-icon">📚</div>
-                        <div class="menu-text">Binary Trees</div>
-                    </div>
-                    <div class="chevron"></div>
-                </div>
-            </div>
-        </div>
+  <!-- The header with Logo and Navigation -->
+  <header class="nav-bar">
+      <div class="logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">CampusLearn</span>
+      </div>
 
-        <!-- Upload Screen -->
-        <div class="screen" id="uploadScreen">
-            <div class="status-bar">
-                <span>9:41</span>
-                <div class="signal-bars">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            
-            <div class="upload-screen">
-                <h1 class="upload-title">Upload Content</h1>
-                <p class="upload-subtitle">Choose a resource to upload</p>
+      <div class="nav-btn-group">
+        <button class="nav-btn active" onclick="showScreen('loginScreen')">Login</button>
+        <button class="nav-btn" onclick="showScreen('signupScreen')">Sign Up</button>
+        <button class="nav-btn" onclick="showScreen('profileScreen')">Profile</button>
+        <button class="nav-btn" onclick="showScreen('uploadScreen')">Upload</button>
+        <button class="nav-btn" onclick="showScreen('topicScreen')">Topics</button>
+      </div>
+  </header>
 
-                <div class="upload-area">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">
-                        Drag and drop a file here<br>
-                        or click to select
-                    </div>
-                </div>
 
-                <button class="upload-btn">Upload</button>
-
-                <div id="uploadedContent" class="uploaded-content" style="margin-top:20px;"></div>
-            </div>
-        </div>
+  <!-- Login Screens -->
+  <div class="screen active" id="loginScreen">
+    <h1 class="title">Student Login</h1>
+    <div class="input-group">
+      <label>✉️Student Email</label>
+      <input type="email" id="loginEmail" placeholder="Enter your email">
     </div>
 
-    <!-- Navigation -->
-    <div class="nav-buttons">
-    <button class="nav-btn active" onclick="showScreen('loginScreen')">Login</button>
-    <button class="nav-btn" onclick="showScreen('profileScreen')">Profile</button>
-    <button class="nav-btn" onclick="showScreen('uploadScreen')">Upload</button>
-    <button class="nav-btn" onclick="showScreen('topicScreen')">Topics</button>
+    <div class="input-group">
+      <label>🔒Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter your password">
     </div>
+    
+    <div id="loginError" class="error-msg"></div>
+    <div class="forgot-password-row">
+      <a href="#" id="forgotPasswordLink" onclick="showForgotPasswordModal(event)">Forgot Password?</a>
+    </div>
+    <button onclick="handleLogin()">Log in</button>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
+      <h2>Reset Password</h2>
+      <div class="input-group">
+        <label for="forgotEmail">Enter your registered email</label>
+        <input type="email" id="forgotEmail" placeholder="Email">
+      </div>
+      <div id="forgotError" class="error-msg"></div>
+      <button onclick="handleForgotPassword()">Reset Password</button>
+    </div>
+  </div>
+
+  <!-- Sign Up Screen -->
+  <div class="screen" id="signupScreen">
+    <h1 class="title">Student Sign Up</h1>
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="signupName" placeholder="Enter your full name">
+    </div>
+
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="Enter your email">
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="Enter your password">
+    </div>
+    <div id="signupError" class="error-msg"></div>
+    <button onclick="handleSignup()">Sign Up</button>
+  </div>
+
+  <!-- Profile Screen -->
+  <div class="screen" id="profileScreen">
+      <div class="profile-header">
+        <div class="profile-avatar">
+           <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="28" cy="28" r="28" fill="#E5E5E5"/>
+            <ellipse cx="28" cy="23" rx="10" ry="10" fill="#6D28D9"/>
+            <ellipse cx="28" cy="41" rx="16" ry="10" fill="#6D28D9"/>
+          </svg>
+
+        </div>
+        <h1 class="title profile-title">Profile</h1>
+      </div>
+      <div id="profileInfo"></div>
+      <form id="profileEditForm">
+        <div class="input-group">
+          <label for="profileName">Full Name</label>
+          <input type="text" id="profileName" name="profileName" />
+        </div>
+        <div class="input-group">
+          <label for="profileAcademic">Academic Details <span class="required-asterisk">*</span></label>
+          <input type="text" id="profileAcademic" name="profileAcademic" placeholder="e.g. BSc Computer Science, Year 2" required />
+        </div>
+        <div class="input-group">
+          <label for="profileTopics">Topics Needed (comma separated) <span class="asterisk">*</span></label>
+          <input type="text" id="profileTopics" name="profileTopics" placeholder="e.g. Algorithms, Calculus" required />
+        </div>
+        <button type="submit" class="upload-btn">Save Profile</button>
+        <button type="button" class="topic-btn margin-left-10" id="cancelProfileEdit">Cancel</button>
+      </form>
+      <button id="editProfileBtn" class="upload-btn">Edit Profile</button>
+      <div class="profile-menu">
+        <div class="profile-menu-item">
+          <span class="profile-menu-icon">📝</span>
+          <span class="profile-menu-label">Tasks</span>
+          <span class="profile-menu-arrow">&gt;</span>
+        </div>
+        <div class="profile-menu-item">
+          <span class="profile-menu-icon">❓</span>
+          <span class="profile-menu-label">Questions</span>
+          <span class="profile-menu-arrow">&gt;</span>
+        </div>
+        <div class="profile-menu-item">
+          <span class="profile-menu-icon">💬</span>
+          <span class="profile-menu-label">Responses</span>
+          <span class="profile-menu-arrow">&gt;</span>
+        </div>
+        <div class="profile-menu-item selected">
+          <span class="profile-menu-icon">🧑‍💻</span>
+          <span class="profile-menu-label">Get Delegated Help</span>
+          <span class="profile-menu-selected">Selected</span>
+          <span class="profile-menu-arrow">&gt;</span>
+        </div>
+        <div class="profile-menu-item">
+          <span class="profile-menu-icon">👨🏻‍🏫</span>
+          <span class="profile-menu-label">Contact Tutor</span>
+          <span class="profile-menu-arrow">&gt;</span>
+      </div>
+  </div>
+</div>
+
+  <!-- Upload Screen -->
+  <div class="screen" id="uploadScreen">
+    <h1 class="title upload-title">Upload Content</h1>
+    <div class="input-group upload-group">
+      <label for="fileInput">Select file to upload:</label>
+      <input type="file" id="fileInput" title="Select file to upload" placeholder="Choose a file" accept=".pdf,.doc,.docx,.txt">
+    </div>
+    <button class="upload-btn" onclick="handleUpload()">Upload</button>
+    <div id="uploadedContent" class="upload-content-box">
+    No files uploaded yet.
+  </div>
+</div>
+
+  <!-- Topic Creation Screen -->
+  <div class="screen" id="topicScreen">
+    <h1 class="title topic-title">Create a Topic</h1>
+    <div class="input-group topic-group">
+      <input type="text" id="topicNameInput" placeholder="Enter topic name">
+    </div>
+    <button class="topic-btn" onclick="createTopic()">Create Topic</button>
+    <div id="topicList" class="topic-content-box">
+      No topics created yet.
+    </div>
+  </div>
 
 </body>
+</html>
+
 </html>
