@@ -1,140 +1,268 @@
-// --- Login validation logic ---
-const loginBtn = document.getElementById('loginBtn');
-const loginEmail = document.getElementById('loginEmail');
-const loginPassword = document.getElementById('loginPassword');
-const loginError = document.getElementById('loginError');
-
-if (loginBtn) {
-    loginBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const email = loginEmail.value.trim();
-        const password = loginPassword.value;
-        // Simple email regex
-        const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-        // Password: at least 6 chars, at least 1 letter and 1 number
-        const passwordValid = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password);
-        if (!emailValid) {
-            loginError.textContent = 'Please enter a valid email address.';
-            return;
-        }
-        if (!passwordValid) {
-            loginError.textContent = 'Password must be at least 6 characters and contain a letter and a number.';
-            return;
-        }
-        loginError.textContent = '';
-        showScreen('profileScreen');
-    });
-}
-// --- Topic creation logic ---
-let topics = [];
-function bindTopicEvents() {
-    const topicInput = document.getElementById('topicNameInput');
-    const topicBtn = document.getElementById('createTopicBtn');
-    const topicListDiv = document.getElementById('topicList');
-    if (!topicBtn || !topicInput || !topicListDiv) return;
-    topicBtn.onclick = function() {
-        const name = topicInput.value.trim();
-        if (!name) {
-            topicListDiv.innerHTML = '<span style="color:red">Please enter a topic name.</span>';
-            return;
-        }
-        topics.push(name);
-        topicInput.value = '';
-        renderTopics();
+// --- Profile menu item click info ---
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.profile-menu-item').forEach((item, idx) => {
+    item.onclick = () => {
+      let info = '';
+      switch (idx) {
+        case 0:
+          info = 'Tasks: View and manage your assigned tasks.';
+          break;
+        case 1:
+          info = 'Questions: See your submitted questions and their status.';
+          break;
+        case 2:
+          info = 'Responses: Review responses to your questions.';
+          break;
+        case 3:
+          info = 'Get Delegated Help: Request help from a tutor or peer.';
+          break;
+        case 4:
+          info = 'Contact Tutor: Reach out to a tutor for direct support.';
+          break;
+        default:
+          info = 'More information coming soon.';
+      }
+      alert(info);
     };
-    renderTopics();
-}
-
-function renderTopics() {
-    const topicListDiv = document.getElementById('topicList');
-    if (!topicListDiv) return;
-    if (topics.length === 0) {
-        topicListDiv.innerHTML = '<em>No topics created yet.</em>';
-        return;
-    }
-    topicListDiv.innerHTML = '<h3>Topics:</h3><ul style="padding-left:20px;">' +
-        topics.map(t => `<li>${t}</li>`).join('') + '</ul>';
-}
-
-// Ensure topic events are bound when topic screen is shown
-document.addEventListener('DOMContentLoaded', function() {
-    bindTopicEvents();
+  });
 });
-function showScreen(screenId) {
-    // Hide all screens
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-    });
-    // Show selected screen
-    document.getElementById(screenId).classList.add('active');
-    // Update nav buttons
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    if (event && event.target) event.target.classList.add('active');
-    // Re-bind topic events if topic screen is shown
-    if (screenId === 'topicScreen') {
-        bindTopicEvents();
-    }
+// --- Navigation ---
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
 }
 
-        // --- Upload logic ---
-        let selectedFile = null;
 
-        // Add click handlers for upload area
-        document.querySelector('.upload-area').addEventListener('click', function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.pdf,.doc,.docx,.txt,.jpg,.png';
-            input.click();
-            input.addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    selectedFile = e.target.files[0];
-                    const fileName = selectedFile.name;
-                    document.querySelector('.upload-text').innerHTML = `Selected: ${fileName}<br>Click upload to proceed`;
-                }
-            });
-        });
+const API_URL = 'http://localhost:4000/api';
+let authToken = null;
 
-        // Add drag and drop functionality
-        const uploadArea = document.querySelector('.upload-area');
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#007AFF';
-            this.style.backgroundColor = '#f0f8ff';
-        });
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-            this.style.backgroundColor = '#fafafa';
-        });
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#ccc';
-            this.style.backgroundColor = '#fafafa';
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                selectedFile = files[0];
-                const fileName = selectedFile.name;
-                document.querySelector('.upload-text').innerHTML = `Selected: ${fileName}<br>Click upload to proceed`;
-            }
-        });
+// --- Signup ---
+async function handleSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const errorDiv = document.getElementById('signupError');
 
-        // Handle upload button click
-        document.querySelector('.upload-btn').addEventListener('click', function() {
-            const contentDiv = document.getElementById('uploadedContent');
-            if (!selectedFile) {
-                contentDiv.innerHTML = '<span style="color:red">No file selected.</span>';
-                return;
-            }
-            // Only display text for text files
-            if (selectedFile.type.startsWith('text') || selectedFile.name.match(/\.(txt|md|csv)$/i)) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    contentDiv.innerHTML = `<h3>File Content:</h3><pre style='white-space:pre-wrap;max-height:300px;overflow:auto;'>${e.target.result}</pre>`;
-                };
-                reader.readAsText(selectedFile);
-            } else {
-                contentDiv.innerHTML = `<span style='color:orange'>Preview not supported for this file type. File selected: ${selectedFile.name}</span>`;
-            }
+  if (!name || !email || !password) {
+    errorDiv.textContent = "All fields are required.";
+    return;
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    errorDiv.textContent = "Invalid email.";
+    return;
+  }
+  if (password.length < 6) {
+    errorDiv.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Registration failed');
+    errorDiv.textContent = "";
+    alert("Signup successful! Please log in.");
+    showScreen('loginScreen');
+  } catch (err) {
+    errorDiv.textContent = err.message;
+  }
+}
+
+// --- Login ---
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errorDiv = document.getElementById('loginError');
+
+  try {
+    const res = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    authToken = data.token;
+    localStorage.setItem('authToken', authToken);
+    localStorage.setItem('currentUser', JSON.stringify({ name: data.name, email: data.email }));
+    errorDiv.textContent = "";
+    loadProfile();
+    showScreen('profileScreen');
+  } catch (err) {
+    errorDiv.textContent = err.message;
+  }
+}
+
+// --- Profile ---
+async function loadProfile() {
+  authToken = localStorage.getItem('authToken');
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_URL}/profile`, {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to load profile');
+    document.getElementById('profileInfo').innerHTML = `
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      <p><strong>Academic Details:</strong> <span id="profileAcademicView">${data.academicDetails || ''}</span></p>
+      <p><strong>Topics Needed:</strong> <span id="profileTopicsView">${(data.topicsNeeded||[]).join(', ')}</span></p>
+    `;
+    // Fill edit form fields
+    document.getElementById('profileName').value = data.name || '';
+    document.getElementById('profileAcademic').value = data.academicDetails || '';
+    document.getElementById('profileTopics').value = (data.topicsNeeded||[]).join(', ');
+  } catch (err) {
+    document.getElementById('profileInfo').innerHTML = `<span style='color:#dc2626;'>${err.message}</span>`;
+  }
+}
+
+// Profile edit logic
+document.addEventListener('DOMContentLoaded', () => {
+  const editBtn = document.getElementById('editProfileBtn');
+  const form = document.getElementById('profileEditForm');
+  const cancelBtn = document.getElementById('cancelProfileEdit');
+  if (editBtn && form && cancelBtn) {
+    editBtn.onclick = () => {
+      form.style.display = '';
+      editBtn.style.display = 'none';
+    };
+    cancelBtn.onclick = () => {
+      form.style.display = 'none';
+      editBtn.style.display = '';
+    };
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('profileName').value.trim();
+      const academicDetails = document.getElementById('profileAcademic').value.trim();
+      const topicsNeededRaw = document.getElementById('profileTopics').value;
+      const topicsNeeded = topicsNeededRaw.split(',').map(t => t.trim()).filter(Boolean);
+      if (!academicDetails) {
+        alert('Academic Details is required.');
+        return;
+      }
+      if (!topicsNeededRaw || topicsNeeded.length === 0) {
+        alert('Topics Needed is required.');
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/profile`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (authToken || localStorage.getItem('authToken'))
+          },
+          body: JSON.stringify({ name, academicDetails, topicsNeeded })
         });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update profile');
+        form.style.display = 'none';
+        editBtn.style.display = '';
+        loadProfile();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    };
+  }
+});
+
+// --- Topics ---
+let topics = [];
+function createTopic() {
+  const input = document.getElementById('topicNameInput');
+  const name = input.value.trim();
+  // Use the correct output div for topics
+  const list = document.getElementById('topicList');
+  if (!name) {
+    list.innerHTML = '<span style="color:#dc2626;">Please enter a topic name.</span>';
+    return;
+  }
+  topics.push(name);
+  input.value = '';
+  list.innerHTML = `<span style='color:#16a34a;'>Topic added!</span>`;
+  setTimeout(renderTopics, 700);
+}
+function renderTopics() {
+  // Use the correct output div for topics
+  const list = document.getElementById('topicList');
+  if (topics.length === 0) {
+    list.innerHTML = "";
+    return;
+  }
+  list.innerHTML = topics.map(t => `<div class='topic-pill'>${t}</div>`).join('');
+}
+
+// --- Upload ---
+let selectedFile = null;
+function handleUpload() {
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+  // Use the correct output div for upload
+  const contentDiv = document.getElementById('uploadedContent');
+
+  if (!file) {
+    contentDiv.innerHTML = "<span style='color:#dc2626;'>No file selected.</span>";
+    return;
+  }
+  if (file.type.startsWith("text")) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      contentDiv.innerHTML = `<span style='color:#16a34a;'>File uploaded successfully!</span><br><pre style='margin:8px 0 0 0; background:#f4f8fc; border-radius:7px; padding:10px;'>${e.target.result.replace(/</g, '&lt;')}</pre>`;
+    };
+    reader.readAsText(file);
+  } else {
+    contentDiv.innerHTML = `<span style='color:#16a34a;'>File uploaded: ${file.name}</span>`;
+  }
+}
+
+// --- Forgot Password Modal & Logic ---
+function showForgotPasswordModal(event) {
+  event.preventDefault();
+  document.getElementById('forgotPasswordModal').style.display = 'block';
+  document.getElementById('forgotEmail').value = '';
+  document.getElementById('forgotError').textContent = '';
+}
+
+function closeForgotPasswordModal() {
+  document.getElementById('forgotPasswordModal').style.display = 'none';
+}
+
+async function handleForgotPassword() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const errorDiv = document.getElementById('forgotError');
+  if (!email) {
+    errorDiv.textContent = 'Please enter your email.';
+    return;
+  }
+  try {
+    const res = await fetch(`${API_URL}/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to reset password');
+    errorDiv.style.color = '#16a34a';
+    errorDiv.textContent = `Your new password is: ${data.newPassword}`;
+  } catch (err) {
+    errorDiv.style.color = '#dc2626';
+    errorDiv.textContent = err.message;
+  }
+}
+
+// Close modal if clicking outside content
+window.onclick = function(event) {
+  const modal = document.getElementById('forgotPasswordModal');
+  if (event.target === modal) {
+    closeForgotPasswordModal();
+  }
+}
+
+
