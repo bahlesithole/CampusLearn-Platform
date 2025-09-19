@@ -124,5 +124,3 @@ const Login = ({ onSwitchToSignup }) => {
 };
 
 export default Login;
-
-export default Login;
