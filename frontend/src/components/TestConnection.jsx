@@ -52,5 +52,3 @@ function TestConnection() {
 }
 
 export default TestConnection;
-
-export default TestConnection;
