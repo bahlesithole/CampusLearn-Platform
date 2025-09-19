@@ -30,6 +30,8 @@ const upload = multer({ storage });
 // -------------------- In-memory users --------------------
 const users = {}; // Replace with DB in production
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+// -------------------- In-memory notifications --------------------
+const notifications = [];
 
 // -------------------- Auth routes --------------------
 
@@ -187,4 +189,110 @@ app.get('/api/files/:id/stream', async (req, res) => {
 // -------------------- Start server --------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+// -------------------- Topic CRUD routes --------------------
+const Topic = require('./models/Topic');
+
+// Create a topic (student)
+app.post('/api/topics', auth, async (req, res) => {
+  try {
+    const { title, description, module } = req.body;
+    if (!title || !description || !module) return res.status(400).json({ error: 'All fields required.' });
+    const topic = await Topic.create({
+      title,
+      description,
+      module,
+      createdBy: req.user.email // or user id if available
+    });
+    // TODO: Trigger notification to tutors here
+      // Add notification for tutors of this module
+      Object.values(users).forEach(user => {
+        if (user.role === 'tutor' && user.modules && user.modules.includes(module)) {
+          notifications.push({
+            to: user.email,
+            message: `New topic created in module ${module}: ${title}`,
+            topicId: topic._id,
+            createdAt: new Date()
+          });
+        }
+      });
+      res.json(topic);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get all topics
+app.get('/api/topics', auth, async (req, res) => {
+  try {
+    const topics = await Topic.find();
+    res.json(topics);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get single topic
+app.get('/api/topics/:id', auth, async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.id);
+    if (!topic) return res.status(404).json({ error: 'Topic not found' });
+    res.json(topic);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update topic (student or tutor)
+app.put('/api/topics/:id', auth, async (req, res) => {
+  try {
+    const topic = await Topic.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!topic) return res.status(404).json({ error: 'Topic not found' });
+    res.json(topic);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get notifications for current user (tutor)
+app.get('/api/notifications', auth, (req, res) => {
+  const user = users[req.user.email];
+  if (!user || user.role !== 'tutor') return res.status(403).json({ error: 'Only tutors can view notifications.' });
+  const userNotifications = notifications.filter(n => n.to === user.email);
+  res.json(userNotifications);
+});
+// Delete topic (student)
+app.delete('/api/topics/:id', auth, async (req, res) => {
+  try {
+    const topic = await Topic.findByIdAndDelete(req.params.id);
+    if (!topic) return res.status(404).json({ error: 'Topic not found' });
+    res.json({ message: 'Topic deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Tutor responds to a topic (restricted by module)
+app.post('/api/topics/:id/respond', auth, async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.id);
+    if (!topic) return res.status(404).json({ error: 'Topic not found' });
+    const user = users[req.user.email];
+    // Check if user is a tutor and has access to the module
+    if (!user || user.role !== 'tutor') {
+      return res.status(403).json({ error: 'Only tutors can respond.' });
+    }
+    if (!user.modules || !user.modules.includes(topic.module)) {
+      return res.status(403).json({ error: 'Tutor not assigned to this module.' });
+    }
+    const { response, resources = [] } = req.body;
+    if (!response) return res.status(400).json({ error: 'Response required.' });
+    topic.responses.push({ tutor: req.user.email, response, resources });
+    await topic.save();
+    res.json(topic);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
