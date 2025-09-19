@@ -296,3 +296,48 @@ app.post('/api/topics/:id/respond', auth, async (req, res) => {
   }
 });
 
+// Tutor uploads resource for a topic response
+app.post('/api/topics/:id/upload-resource', auth, upload.single('file'), async (req, res) => {
+  try {
+    const topic = await Topic.findById(req.params.id);
+    if (!topic) return res.status(404).json({ error: 'Topic not found' });
+    const user = users[req.user.email];
+    if (!user || user.role !== 'tutor') {
+      return res.status(403).json({ error: 'Only tutors can upload resources.' });
+    }
+    if (!user.modules || !user.modules.includes(topic.module)) {
+      return res.status(403).json({ error: 'Tutor not assigned to this module.' });
+    }
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    // Accept only videos, PDFs, audios
+    const allowedTypes = ['video/', 'application/pdf', 'audio/'];
+    if (!allowedTypes.some(type => req.file.mimetype.startsWith(type))) {
+      return res.status(400).json({ error: 'Invalid file type.' });
+    }
+    const { originalname, mimetype, buffer } = req.file;
+    const readable = new Readable();
+    readable.push(buffer);
+    readable.push(null);
+    const uploadStream = gfsBucket.openUploadStream(originalname, {
+      contentType: mimetype,
+      metadata: { topicId: topic._id, uploadedBy: user.email }
+    });
+    readable.pipe(uploadStream)
+      .on('error', (err) => {
+        console.error(err);
+        res.status(500).json({ error: 'Upload failed' });
+      })
+      .on('finish', async () => {
+        // Attach resource to the latest response by this tutor
+        const lastResponse = topic.responses.filter(r => r.tutor === user.email).slice(-1)[0];
+        if (lastResponse) {
+          lastResponse.resources.push(uploadStream.id.toString());
+          await topic.save();
+        }
+        res.json({ message: 'Resource uploaded', id: uploadStream.id });
+      });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
